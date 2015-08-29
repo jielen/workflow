@@ -1,0 +1,57 @@
+/*    */ package com.kingdrive.workflow.dialog;
+/*    */ 
+/*    */ import java.lang.reflect.Field;
+/*    */ import java.util.List;
+/*    */ import javax.swing.table.AbstractTableModel;
+/*    */ 
+/*    */ public class ObjectTableModel extends AbstractTableModel
+/*    */ {
+/*    */   private static final long serialVersionUID = 1443961875368326621L;
+/*    */   private String[] columnNames;
+/*    */   private String[] propNames;
+/*    */   private List rowList;
+/*    */ 
+/*    */   public ObjectTableModel(String[] columnNames, String[] propNames, List rowList)
+/*    */   {
+/* 18 */     this.columnNames = columnNames;
+/* 19 */     this.propNames = propNames;
+/* 20 */     this.rowList = rowList;
+/*    */   }
+/*    */ 
+/*    */   public int getColumnCount()
+/*    */   {
+/* 25 */     return this.columnNames.length;
+/*    */   }
+/*    */ 
+/*    */   public int getRowCount()
+/*    */   {
+/* 30 */     return this.rowList.size();
+/*    */   }
+/*    */ 
+/*    */   public String getColumnName(int column) {
+/* 34 */     return this.columnNames[column];
+/*    */   }
+/*    */ 
+/*    */   public Object getValueAt(int rowIndex, int columnIndex)
+/*    */   {
+/* 39 */     Object model = this.rowList.get(rowIndex);
+/* 40 */     String propName = this.propNames[columnIndex];
+/*    */     try {
+/* 42 */       Field field = model.getClass().getDeclaredField(propName);
+/* 43 */       field.setAccessible(true);
+/* 44 */       return field.get(model);
+/*    */     } catch (Exception ex) {
+/* 46 */       ex.printStackTrace();
+/* 47 */     }return "Illegal property name";
+/*    */   }
+/*    */ 
+/*    */   public boolean isCellEditable(int row, int col)
+/*    */   {
+/* 52 */     return false;
+/*    */   }
+/*    */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.ObjectTableModel
+ * JD-Core Version:    0.6.0
+ */

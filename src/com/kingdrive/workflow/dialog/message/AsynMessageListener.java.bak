@@ -1,0 +1,53 @@
+/*    */ package com.kingdrive.workflow.dialog.message;
+/*    */ 
+/*    */ import java.io.PrintStream;
+/*    */ import javax.jms.Message;
+/*    */ import javax.jms.MessageListener;
+/*    */ 
+/*    */ public class AsynMessageListener
+/*    */   implements MessageListener
+/*    */ {
+/*  7 */   private DoneLatch latch = new DoneLatch();
+/*    */   private MessageCallback callback;
+/* 11 */   private volatile boolean receiveMessage = true;
+/*    */ 
+/*    */   public boolean isReceiveMessage()
+/*    */   {
+/* 18 */     return this.receiveMessage;
+/*    */   }
+/*    */ 
+/*    */   public void setReceiveMessage(boolean receiveMessage)
+/*    */   {
+/* 25 */     this.receiveMessage = receiveMessage;
+/*    */   }
+/*    */ 
+/*    */   public AsynMessageListener()
+/*    */   {
+/*    */   }
+/*    */ 
+/*    */   public AsynMessageListener(MessageCallback cb) {
+/* 33 */     this.callback = cb;
+/*    */   }
+/*    */ 
+/*    */   public DoneLatch getLatch()
+/*    */   {
+/* 40 */     return this.latch;
+/*    */   }
+/*    */ 
+/*    */   public void onMessage(Message mess)
+/*    */   {
+/*    */     try {
+/* 46 */       if (isReceiveMessage())
+/* 47 */         this.callback.onMessage(mess);
+/*    */     }
+/*    */     catch (Exception ex) {
+/* 50 */       System.err.println(ex);
+/* 51 */       this.latch.allDone();
+/*    */     }
+/*    */   }
+/*    */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.message.AsynMessageListener
+ * JD-Core Version:    0.6.0
+ */

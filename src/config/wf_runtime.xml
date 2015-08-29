@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WFEngine">
+	<!-- 草稿 -->
+	<insert id="create_Draft" parameterClass="com.kingdrive.workflow.model.runtime.DraftModel">
+		<selectKey resultClass="long" keyProperty="draftId" >
+			SELECT -seq_instance.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO AS_WF_DRAFT
+		  (WF_DRAFT_ID,
+		   WF_DRAFT_NAME,
+		   COMPO_ID,
+		   MASTER_TAB_ID,
+		   USER_ID,
+		   USER_NAME,
+		   SAVE_TIME,
+		   STATUS)
+		VALUES
+		  (#draftId#,
+		   #draftName#,
+		   #compoId#,
+		   #masteTableId#,
+		   #userId#,
+		   #userName#,
+		   #saveTime#,
+		   #status#)
+	</insert>
+	<delete id="remove_Draft_byId" parameterClass="long">
+		DELETE FROM as_wf_draft t 
+		WHERE 
+			t.wf_draft_id=#value#
+	</delete>
+	<select id="get_Draft_byId" parameterClass="long" resultMap="draftmap">
+		SELECT * FROM as_wf_draft t 
+		WHERE 
+			t.wf_draft_id=#value#
+	</select>
+	
+	<!-- 实例 -->
+	<insert id="create_Instance" parameterClass="com.kingdrive.workflow.model.runtime.InstanceModel">
+		<selectKey resultClass="long" keyProperty="instanceId" >
+			SELECT seq_instance.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_INSTANCE
+		  (INSTANCE_ID,
+		   NAME,
+		   DESCRIPTION,
+		   TEMPLATE_ID,
+		   OWNER,
+		   START_TIME,
+		   END_TIME,
+		   STATUS,
+		   PARENT_INSTANCE_ID)
+		VALUES
+		  (#instanceId#,
+		   #name#,
+		   #description:VARCHAR#,
+		   #templateId#,
+		   #owner#,
+		   #startTime#,
+		   #endTime#,
+		   #status#,
+		   #parentInstanceId#)
+	</insert>
+	<delete id="remove_Instance_byId" parameterClass="long">
+		DELETE FROM wf_instance t 
+		WHERE 
+			t.instance_id=#value#
+	</delete>
+	<select id="get_Instance_byId" parameterClass="long" resultMap="instancemap">
+		SELECT * FROM wf_instance t 
+		WHERE 
+			t.Instance_Id=#value#
+	</select>
+	<update id="update_instance" parameterClass="com.kingdrive.workflow.model.runtime.InstanceModel">
+		 UPDATE wf_instance t SET t.status=#status#, t.end_time=#endTime# WHERE t.Instance_Id=#instanceId#
+	</update>
+	
+	<!-- current task -->
+	<insert id="create_CurrentTask" parameterClass="com.kingdrive.workflow.model.runtime.CurrentTaskModel">
+		<selectKey resultClass="long" keyProperty="currentTaskId" >
+			SELECT seq_current_task.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_CURRENT_TASK
+		  (CURRENT_TASK_ID,
+		   INSTANCE_ID,
+		   NODE_ID,
+		   EXECUTOR,
+		   DELEGATION_ID,
+		   OWNER,
+		   CREATOR,
+		   CREATE_TIME,
+		   LIMIT_EXECUTE_TIME,
+		   RESPONSIBILITY,
+		   PARENT_TASK_ID,
+		   GRANTER_ID,
+		   GRANTER_INFO,
+		   GK_SEND_STATUS
+		   )
+		VALUES
+		  (#currentTaskId#,
+		   #instanceId#,
+		   #nodeId#,
+		   #executor#,
+		   #delegationId#,
+		   #owner#,
+		   #creator#,
+		   #createTime#,
+		   #limitExecuteTime:VARCHAR#,
+		   #responsibility#,
+		   #parentTaskId#,
+		   #granterId#,
+		   #granterInfo#,
+		   #gkSendStatus#)
+	</insert>
+	<delete id="remove_currentTask" parameterClass="com.kingdrive.workflow.model.runtime.CurrentTaskModel">
+		DELETE FROM wf_current_task t 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="currentTaskId">
+				t.current_task_id=#currentTaskId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="instanceId">
+				t.Instance_Id=#instanceId#	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nodeId">
+				t.Node_Id=#nodeId#	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="executor">
+				t.executor=#executor#	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="creator">
+				t.creator=#creator#	
+			</isNotEmpty>
+		</dynamic>
+	</delete>
+	<select id="get_currentTask" parameterClass="com.kingdrive.workflow.model.runtime.CurrentTaskModel" resultMap="currenttaskmap">
+		SELECT *
+		  FROM wf_current_task t
+		 INNER JOIN WF_INSTANCE i ON t.INSTANCE_ID = i.INSTANCE_ID
+		                         AND i.STATUS = 1
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="instanceId">
+				t.Instance_Id=#instanceId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nodeId">
+				t.Node_Id=#nodeId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="executor">
+				t.executor=#executor#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!-- taskexecutor -->
+	<insert id="create_TaskExecutor" parameterClass="com.kingdrive.workflow.model.runtime.TaskExecutorModel">
+		<selectKey resultClass="long" keyProperty="taskExecutorOrderId" >
+			SELECT seq_task_executor.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_TASK_EXECUTOR
+		  (TASK_EXECUTOR_ORDER_ID,
+		   INSTANCE_ID,
+		   NODE_ID,
+		   EXECUTOR,
+		   EXECUTOR_ORDER,
+		   RESPONSIBILITY
+		   )
+		VALUES
+		  (#taskExecutorOrderId#,
+		   #instanceId#,
+		   #nodeId#,
+		   #executor#,
+		   #executorOrder#,
+		   #responsibility#
+		   )	
+	</insert>
+	<select id="get_TaskExecutor" parameterClass="com.kingdrive.workflow.model.runtime.TaskExecutorModel" resultClass="string">
+  		SELECT t.executor FROM wf_task_executor t
+  		<dynamic prepend="WHERE">
+  			<isNotEmpty prepend="AND" property="instanceId">
+  				t.Instance_Id=#instanceId# 
+  			</isNotEmpty>
+  			<isNotEmpty prepend="AND" property="nodeId">
+  				t.Node_Id=#nodeId#
+  			</isNotEmpty>
+  		</dynamic>
+	</select>
+	<select id="get_TaskExecutorModel" parameterClass="com.kingdrive.workflow.model.runtime.TaskExecutorModel" resultMap="taskexecutormap">
+  		SELECT t.* FROM wf_task_executor t
+  		<dynamic prepend="WHERE">
+  			<isNotEmpty prepend="AND" property="instanceId">
+  				t.Instance_Id=#instanceId# 
+  			</isNotEmpty>
+  			<isNotEmpty prepend="AND" property="nodeId">
+  				t.Node_Id=#nodeId#
+  			</isNotEmpty>
+  			<isNotEmpty prepend="AND" property="taskExecutorOrderId">
+  				t.TASK_EXECUTOR_ORDER_ID=#taskExecutorOrderId#
+  			</isNotEmpty>
+  			ORDER BY t.TASK_EXECUTOR_ORDER_ID
+  		</dynamic>
+	</select>
+	<delete id="remove_TaskExecutor" parameterClass="com.kingdrive.workflow.model.runtime.TaskExecutorModel">
+		DELETE FROM WF_TASK_EXECUTOR t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="taskExecutorOrderId">
+				t.TASK_EXECUTOR_ORDER_ID=#taskExecutorOrderId#
+			</isNotEmpty>
+  			<isNotEmpty prepend="AND" property="instanceId">
+  				t.Instance_Id=#instanceId# 
+  			</isNotEmpty>		
+  			<isNotEmpty prepend="AND" property="nodeId">
+  				t.Node_Id=#nodeId#
+  			</isNotEmpty>		
+   			<isNotEmpty prepend="AND" property="executor">
+  				t.EXECUTOR=#executor#
+  			</isNotEmpty>
+		</dynamic>
+	</delete>
+	
+	<!-- action -->
+	<insert id="create_Action" parameterClass="com.kingdrive.workflow.model.runtime.ActionModel">
+		<selectKey resultClass="long" keyProperty="actionId" >
+			SELECT seq_action.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_ACTION
+		  (ACTION_ID,
+		   INSTANCE_ID,
+		   NODE_ID,
+		   ACTION_NAME,
+		   EXECUTOR,
+		   EXECUTE_TIME,
+		   DESCRIPTION,
+		   OWNER,
+		   LIMIT_EXECUTE_TIME)
+		VALUES
+		  (#actionId#,
+		   #instanceId#,
+		   #nodeId#,
+		   #actionName:VARCHAR#,
+		   #executor#,
+		   #executeTime#,
+		   #description:VARCHAR#,
+		   #owner#,
+		   #limitExecuteTime:VARCHAR#)		
+	</insert>
+	
+	<delete id="remove_Action" parameterClass="com.kingdrive.workflow.model.runtime.ActionModel">
+		DELETE FROM wf_action t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="actionId">
+				t.action_id=#actionId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="instanceId">
+				t.instance_id=#instanceId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nodeId">
+				t.node_id=#nodeId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="executor">
+				t.executor=#executor# 
+			</isNotEmpty>
+		</dynamic>
+	</delete>
+	
+	<select id="get_Action" parameterClass="com.kingdrive.workflow.model.runtime.ActionModel" resultMap="actionmap">
+		SELECT * FROM wf_action t 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="instanceId">
+				t.Instance_Id=#instanceId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nodeId">
+				t.Node_Id=#nodeId#	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="actionName">
+				t.ACTION_NAME=#actionName#	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="executor">
+				t.EXECUTOR=#executor#	
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY t.EXECUTE_TIME
+	</select>
+	
+	<!-- actionhistory -->
+	<insert id="create_ActionHistory" parameterClass="com.kingdrive.workflow.model.runtime.ActionHistoryModel">
+		<selectKey resultClass="long" keyProperty="actionHistoryId" >
+			SELECT seq_action_history.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_ACTION_HISTORY
+		  (ACTION_HISTORY_ID,
+		   INSTANCE_ID,
+		   NODE_ID,
+		   ACTION_NAME,
+		   EXECUTOR,
+		   EXECUTE_TIME,
+		   DESCRIPTION,
+		   OWNER,
+		   LIMIT_EXECUTE_TIME)
+		VALUES
+		  (#actionHistoryId#,
+		   #instanceId#,
+		   #nodeId#,
+		   #actionName:VARCHAR#,
+		   #executor#,
+		   #executeTime#,
+		   #description:VARCHAR#,
+		   #owner#,
+		   #limitExecuteTime:VARCHAR#)
+	</insert>
+	<select id="get_ActionHistory" parameterClass="com.kingdrive.workflow.model.runtime.ActionHistoryModel" resultMap="actionhistorymap">
+		SELECT * FROM wf_action_history t, wf_instance i WHERE t.Instance_Id=i.Instance_Id AND i.status>-9
+		<isNotEmpty prepend="AND" property="instanceId">
+			t.Instance_Id=#instanceId# 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="executor">
+			t.executor=#executor# 
+		</isNotEmpty>
+		ORDER BY t.execute_time
+	</select>
+	
+	<!-- statevalue -->
+	<insert id="create_StateValue" parameterClass="com.kingdrive.workflow.model.runtime.StateValueModel">
+		<selectKey resultClass="long" keyProperty="stateValueId" >
+			SELECT seq_state_value.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO WF_STATE_VALUE
+		  (STATE_VALUE_ID, INSTANCE_ID, STATE_ID, VALUE)
+		VALUES
+		  (#stateValueId#,
+		   #instanceId#,
+		   #stateId#,
+		   #value#)
+	</insert>
+	
+	<select id="get_StateValue" parameterClass="com.kingdrive.workflow.model.runtime.StateValueModel" resultMap="statevaluemap">
+		SELECT * FROM wf_state_value t WHERE t.Instance_Id=#instanceId#
+	</select>
+	
+	<update id="update_StateValue" parameterClass="com.kingdrive.workflow.model.runtime.StateValueModel">
+	    UPDATE wf_state_value t SET t.value=#value# WHERE t.state_value_id=#stateValueId#
+	</update>
+	
+	<delete id="remove_StateValue" parameterClass="com.kingdrive.workflow.model.runtime.StateValueModel">
+		DELETE FROM WF_STATE_VALUE t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="stateValueId">
+				t.state_value_id=#stateValueId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="instanceId">
+				t.instance_id=#instanceId# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="stateId">
+				t.state_id=#stateId# 
+			</isNotEmpty>
+		</dynamic>
+	</delete>
+	<select id="get_BusinessJunIor" parameterClass="int" resultMap="businessJuniormap">
+		SELECT * FROM as_wf_business_superior t WHERE t.nd=#value#
+	</select>
+</sqlMap>
+

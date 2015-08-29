@@ -1,0 +1,217 @@
+/*     */ package com.kingdrive.workflow.context;
+/*     */ 
+/*     */ import com.kingdrive.workflow.listener.TaskListener;
+/*     */ import com.kingdrive.workflow.model.TableData;
+/*     */ import com.kingdrive.workflow.model.TaskUser;
+/*     */ import com.kingdrive.workflow.model.meta.NodeModel;
+/*     */ import java.util.ArrayList;
+/*     */ import java.util.HashMap;
+/*     */ import java.util.List;
+/*     */ import java.util.Map;
+/*     */ 
+/*     */ public class WorkflowContext
+/*     */ {
+/*     */   private Long instanceId;
+/*     */   private Long templateId;
+/*     */   private String executor;
+/*     */   private String tableName;
+/*     */   private TableData entityData;
+/*  25 */   private NodeModel currentNode = new NodeModel();
+/*  26 */   private NodeModel nextNode = new NodeModel();
+/*  27 */   private String comment = "";
+/*     */   private String exeTime;
+/*  29 */   private List defaultListener = new ArrayList();
+/*     */ 
+/*  39 */   private Map variableMap = new HashMap();
+/*  40 */   private List nextLink = new ArrayList();
+/*  41 */   private List nextExecutor = new ArrayList();
+/*  42 */   private List responsibility = new ArrayList();
+/*     */ 
+/*  44 */   private WorkflowContext granterContext = null;
+/*     */ 
+/*     */   public Long getInstanceId()
+/*     */   {
+/*  51 */     return this.instanceId;
+/*     */   }
+/*     */ 
+/*     */   public void setInstanceId(Long instanceId)
+/*     */   {
+/*  59 */     this.instanceId = instanceId;
+/*     */   }
+/*     */ 
+/*     */   public Long getTemplateId()
+/*     */   {
+/*  67 */     return this.templateId;
+/*     */   }
+/*     */ 
+/*     */   public void setTemplateId(Long templateId)
+/*     */   {
+/*  75 */     this.templateId = templateId;
+/*     */   }
+/*     */ 
+/*     */   public String getExecutor()
+/*     */   {
+/*  82 */     return this.executor;
+/*     */   }
+/*     */ 
+/*     */   public void setExecutor(String executor)
+/*     */   {
+/*  89 */     this.executor = executor;
+/*     */   }
+/*     */ 
+/*     */   public NodeModel getCurrentNode()
+/*     */   {
+/*  97 */     return this.currentNode;
+/*     */   }
+/*     */ 
+/*     */   public void setCurrentNode(NodeModel currentNode)
+/*     */   {
+/* 105 */     this.currentNode = currentNode;
+/*     */   }
+/*     */ 
+/*     */   public Long getCurrentNodeId()
+/*     */   {
+/* 113 */     return this.currentNode.getNodeId();
+/*     */   }
+/*     */ 
+/*     */   public void setCurrentNodeId(Long nodeId)
+/*     */   {
+/* 121 */     this.currentNode.setNodeId(nodeId);
+/*     */   }
+/*     */ 
+/*     */   public List getNextExecutor()
+/*     */   {
+/* 129 */     List result = new ArrayList();
+/* 130 */     for (int i = 0; i < this.nextExecutor.size(); i++) {
+/* 131 */       result.add(new TaskUser((String)this.nextExecutor.get(i)));
+/*     */     }
+/* 133 */     return result;
+/*     */   }
+/*     */ 
+/*     */   public void setNextExecutor(List nextExecutor)
+/*     */   {
+/* 141 */     this.nextExecutor = nextExecutor;
+/*     */   }
+/*     */ 
+/*     */   public List getResponsibility() {
+/* 145 */     return this.responsibility;
+/*     */   }
+/*     */ 
+/*     */   public void setResponsibility(List responsibility) {
+/* 149 */     this.responsibility = responsibility;
+/*     */   }
+/*     */ 
+/*     */   public TableData getEntityData()
+/*     */   {
+/* 157 */     return this.entityData;
+/*     */   }
+/*     */ 
+/*     */   public void setEntityData(TableData entityData)
+/*     */   {
+/* 165 */     this.entityData = entityData;
+/*     */   }
+/*     */ 
+/*     */   public List getNextLink()
+/*     */   {
+/* 173 */     return this.nextLink;
+/*     */   }
+/*     */ 
+/*     */   public void setNextLink(List nextLink)
+/*     */   {
+/* 181 */     this.nextLink = nextLink;
+/*     */   }
+/*     */ 
+/*     */   public void setVariable(String name, Object value)
+/*     */   {
+/* 190 */     this.variableMap.put(name, value);
+/*     */   }
+/*     */ 
+/*     */   public void setVariables(Map values) {
+/* 194 */     this.variableMap.putAll(values);
+/*     */   }
+/*     */ 
+/*     */   public Object getVariable(String name) {
+/* 198 */     return this.variableMap.get(name);
+/*     */   }
+/*     */ 
+/*     */   public Map getAllVariables() {
+/* 202 */     return this.variableMap;
+/*     */   }
+/*     */ 
+/*     */   public String getComment() {
+/* 206 */     return this.comment;
+/*     */   }
+/*     */ 
+/*     */   public void setComment(String comment) {
+/* 210 */     this.comment = comment;
+/*     */   }
+/*     */ 
+/*     */   public String getExeTime() {
+/* 214 */     return this.exeTime;
+/*     */   }
+/*     */ 
+/*     */   public void setExeTime(String exeTime) {
+/* 218 */     this.exeTime = exeTime;
+/*     */   }
+/*     */ 
+/*     */   public NodeModel getNextNode() {
+/* 222 */     return this.nextNode;
+/*     */   }
+/*     */ 
+/*     */   public void setNextNode(NodeModel nextNode) {
+/* 226 */     this.nextNode = nextNode;
+/*     */   }
+/*     */ 
+/*     */   public Long getNextNodeId() {
+/* 230 */     return this.nextNode.getNodeId();
+/*     */   }
+/*     */ 
+/*     */   public void setNextNodeId(Long id) {
+/* 234 */     this.nextNode.setNodeId(id);
+/*     */   }
+/*     */ 
+/*     */   public String getTableName() {
+/* 238 */     return this.tableName;
+/*     */   }
+/*     */ 
+/*     */   public void setTableName(String tableName) {
+/* 242 */     this.tableName = tableName;
+/*     */   }
+/*     */ 
+/*     */   public List getDefaultListener() {
+/* 246 */     return this.defaultListener;
+/*     */   }
+/*     */ 
+/*     */   public void addDefaultListener(TaskListener listener) {
+/* 250 */     this.defaultListener.add(listener);
+/*     */   }
+/*     */ 
+/*     */   public WorkflowContext getGranterContext()
+/*     */   {
+/* 257 */     return this.granterContext;
+/*     */   }
+/*     */ 
+/*     */   public void setGranterContext(WorkflowContext granterContext)
+/*     */   {
+/* 264 */     this.granterContext = granterContext;
+/*     */   }
+/*     */ 
+/*     */   public boolean hasGranterContext() {
+/* 268 */     return this.granterContext != null;
+/*     */   }
+/*     */ 
+/*     */   public Map getVariableMap()
+/*     */   {
+/* 275 */     return this.variableMap;
+/*     */   }
+/*     */ 
+/*     */   public void setVariableMap(Map variableMap)
+/*     */   {
+/* 282 */     this.variableMap = variableMap;
+/*     */   }
+/*     */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.context.WorkflowContext
+ * JD-Core Version:    0.6.0
+ */

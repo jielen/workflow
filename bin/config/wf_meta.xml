@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WFEngine">
+	<!-- template 操作 -->
+	<select id="template_query_byId" resultMap="templatemap"
+		parameterClass="long">
+		SELECT * FROM wf_template t WHERE t.template_id=#value#
+	</select>
+
+	<!-- node 操作 -->
+	<select id="node_query_byId" resultMap="nodemap"
+		parameterClass="long">
+		SELECT * FROM wf_node n WHERE n.Node_Id=#value#
+	</select>
+	<select id="node_query_byTemplateId" resultMap="nodemap"
+		parameterClass="int">
+		SELECT * FROM wf_node t WHERE t.template_id=#value#
+	</select>
+	<select id="nodeState_query_byNodeId" resultMap="nodestatemap"
+		parameterClass="long">
+		SELECT * FROM wf_node_state t where t.Node_Id=#value#
+	</select>
+
+	<!-- link 操作 -->
+	<select id="link_query_byId" resultMap="linkmap"
+		parameterClass="long">
+		SELECT * FROM wf_link t WHERE t.Node_Link_Id=#value#
+	</select>
+	<select id="link_query_byTemplateId" resultMap="linkmap"
+		parameterClass="long">
+		SELECT * FROM wf_link t WHERE t.template_id=#value#
+	</select>
+	<select id="linkState_query_byLinkId" resultMap="linkstatemap"
+		parameterClass="long">
+		SELECT * FROM wf_link_state t WHERE t.Node_Link_Id=#value#
+	</select>
+	
+	<!--  -->
+	<select id="bindState_query_byTemplate" parameterClass="long" resultMap="bindstatemap">
+		SELECT * FROM as_wf_bind_state t WHERE t.wf_template_id=#value#
+	</select>
+	<select id="bindVariable_query_byTemplate" parameterClass="long" resultMap="bindVariablemap">
+		select b.variable_id VARIABLE_ID, b.DESCRIPTION, b.TEMPLATE_ID, b.TYPE, BIND_EXPRESSION ,TAB_ID ,CONDITION,FILTER_BY_ENTITYKEY,b.name NAME from AS_WF_BIND_VARIABLE a,WF_VARIABLE b where a.wf_variable=b.variable_id and WF_TEMPLATE_ID=#value#
+	</select>
+</sqlMap>
+

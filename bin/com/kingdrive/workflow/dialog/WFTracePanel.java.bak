@@ -1,0 +1,103 @@
+/*     */ package com.kingdrive.workflow.dialog;
+/*     */ 
+/*     */ import com.kingdrive.workflow.dialog.action.ZoomInAction;
+/*     */ import com.kingdrive.workflow.dialog.action.ZoomMactualAction;
+/*     */ import com.kingdrive.workflow.dialog.action.ZoomOutAction;
+/*     */ import com.kingdrive.workflow.model.runtime.TraceInfoModel;
+/*     */ import com.kingdrive.workflow.utils.JGraphUtil;
+/*     */ import java.awt.BorderLayout;
+/*     */ import java.io.IOException;
+/*     */ import javax.swing.JPanel;
+/*     */ import javax.swing.JScrollPane;
+/*     */ import javax.swing.JSplitPane;
+/*     */ import javax.swing.JTable;
+/*     */ import javax.swing.JToolBar;
+/*     */ import javax.swing.ToolTipManager;
+/*     */ import org.jgraph.JGraph;
+/*     */ 
+/*     */ public class WFTracePanel extends JPanel
+/*     */ {
+/*  22 */   private String[] columnNames = { "节点", "活动", "执行人", "执行时间", "意见" };
+/*     */ 
+/*  24 */   private String[] propNames = { "nodeName", "actionName", "executorName", 
+/*  25 */     "executeTime", "description" };
+/*     */   private JGraph jgraph;
+/*     */   private TraceInfoModel traceInfoModel;
+/*     */   private JToolBar toolBar;
+/*     */   private JSplitPane splitPane;
+/*     */   public String traceInfo;
+/*     */ 
+/*     */   public WFTracePanel(TraceInfoModel traceInfo, JTable table)
+/*     */   {
+/*  37 */     setLayout(new BorderLayout());
+/*  38 */     this.traceInfoModel = traceInfo;
+/*  39 */     this.splitPane = new JSplitPane(0);
+/*  40 */     this.splitPane.setOneTouchExpandable(true);
+/*  41 */     this.splitPane.setDividerLocation(230);
+/*  42 */     add(this.splitPane, "Center");
+/*  43 */     initData(this.traceInfoModel);
+/*  44 */     initGraph();
+/*  45 */     initComponent();
+/*  46 */     initTable(table);
+/*     */   }
+/*     */ 
+/*     */   private void initComponent() {
+/*     */     try {
+/*  51 */       this.toolBar = new JToolBar();
+/*  52 */       this.toolBar.add(new ZoomMactualAction("zoommactual", this.jgraph));
+/*  53 */       this.toolBar.add(new ZoomInAction("zoomin", this.jgraph));
+/*  54 */       this.toolBar.add(new ZoomOutAction("zoomout", this.jgraph));
+/*  55 */       this.toolBar.addSeparator();
+/*     */ 
+/*  58 */       this.toolBar.setFloatable(false);
+/*  59 */       add(this.toolBar, "North");
+/*     */     } catch (Exception ex) {
+/*  61 */       ex.printStackTrace();
+/*     */     }
+/*     */   }
+/*     */ 
+/*     */   private void initData(TraceInfoModel traceInfoModel) {
+/*  66 */     String str = "开始时间: " + traceInfoModel.getStartTime() + "  ";
+/*  67 */     if ("1".equals(traceInfoModel.getStatus())) {
+/*  68 */       str = str + "进行中......";
+/*     */     }
+/*  70 */     else if ("9".equals(traceInfoModel.getStatus())) {
+/*  71 */       str = str + "结束时间: " + traceInfoModel.getEndTime();
+/*     */     }
+/*     */ 
+/*  74 */     this.traceInfo = str;
+/*     */   }
+/*     */ 
+/*     */   private void initGraph()
+/*     */   {
+/*  80 */     JGraphUtil util = new JGraphUtil();
+/*     */     try {
+/*  82 */       this.jgraph = util.assembleJGraph(this.traceInfoModel, 50, 20);
+/*  83 */       this.jgraph.setEditable(false);
+/*  84 */       ToolTipManager.sharedInstance().registerComponent(this.jgraph);
+/*  85 */       this.splitPane.setTopComponent(new JScrollPane(this.jgraph));
+/*     */     }
+/*     */     catch (IOException e) {
+/*  88 */       e.printStackTrace();
+/*     */     }
+/*     */   }
+/*     */ 
+/*     */   private void initTable(JTable table) {
+/*  93 */     JTable traceTable = table;
+/*  94 */     if (traceTable == null) {
+/*  95 */       traceTable = new JTable(
+/*  96 */         new ObjectTableModel(this.columnNames, this.propNames, 
+/*  96 */         this.traceInfoModel.getActionHistoryList()));
+/*     */     }
+/*  98 */     traceTable.setModel(
+/*  99 */       new ObjectTableModel(this.columnNames, this.propNames, 
+/*  99 */       this.traceInfoModel.getActionHistoryList()));
+/*     */ 
+/* 102 */     this.splitPane.setBottomComponent(new JScrollPane(traceTable));
+/*     */   }
+/*     */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.WFTracePanel
+ * JD-Core Version:    0.6.0
+ */

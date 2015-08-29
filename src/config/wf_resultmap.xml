@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WFEngine">
+	<resultMap class="com.kingdrive.workflow.model.meta.TemplateModel" id="templatemap">
+		<result property="templateId"    		column="TEMPLATE_ID" />	
+		<result property="name"          		column="NAME" />		
+		<result property="description"   		column="DESCRIPTION" />		
+		<result property="templateType"  		column="TEMPLATE_TYPE" />		
+		<result property="version"       		column="VERSION" />	
+		<result property="startTime"     		column="START_TIME" />		
+		<result property="expireTime"    		column="EXPIRE_TIME" />		
+		<result property="createTime"    		column="CREATE_TIME" />		
+		<result property="createStaffId" 		column="CREATE_STAFF_ID" />		
+		<result property="active"        		column="IS_ACTIVE" />	
+		<result property="nodeList"      		column="TEMPLATE_ID" select="WFEngine.node_query_byTemplateId" />	
+		<result property="linkList"      		column="TEMPLATE_ID" select="WFEngine.link_query_byTemplateId" />
+		<result property="bindStateList" 		column="TEMPLATE_ID" select="WFEngine.bindState_query_byTemplate" />
+		<result property="bindVariableList"		column="TEMPLATE_ID" select="WFEngine.bindVariable_query_byTemplate" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.meta.NodeModel" id="nodemap">
+		<result property="nodeId"            	column="NODE_ID" />
+		<result property="name"              	column="NAME" />
+		<result property="description"       	column="DESCRIPTION" />
+		<result property="type"              	column="TYPE" />
+		<result property="businessType"      	column="BUSINESS_TYPE" />
+		<result property="templateId"        	column="TEMPLATE_ID" />
+		<result property="executorsMethod"   	column="EXECUTORS_METHOD" />
+		<result property="taskListener"      	column="TASK_LISTENER" />
+		<result property="limitExecuteTerm"  	column="LIMIT_EXECUTE_TERM"	/>
+		<result property="remindExecuteTerm" 	column="REMIND_EXECUTE_TERM" />	
+		<result property="nodeStateList"     	column="NODE_ID" select="WFEngine.nodeState_query_byNodeId" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.meta.LinkModel" id="linkmap">
+		<result property="nodeLinkId" 			column="NODE_LINK_ID" />			
+		<result property="name" 				column="NAME" />			
+		<result property="description" 			column="DESCRIPTION" />			
+		<result property="linkType" 			column="LINK_TYPE" />
+		<result property="templateId" 			column="TEMPLATE_ID" />
+		<result property="currentNodeId" 		column="CURRENT_NODE_ID" />
+		<result property="nextNodeId" 			column="NEXT_NODE_ID" />
+		<result property="executorRelation" 	column="EXECUTOR_RELATION" />
+		<result property="executorsMethod" 		column="EXECUTORS_METHOD" />
+		<result property="numberOrPercent" 		column="NUMBER_OR_PERCENT" />
+		<result property="passValue" 			column="PASS_VALUE" />
+		<result property="expression" 			column="EXPRESSION" />
+		<result property="defaultPath" 			column="DEFAULT_PATH" />			
+		<result property="actionName" 			column="ACTION_NAME" />	
+		<result property="linkStateList" 		column="NODE_LINK_ID" select="WFEngine.linkState_query_byLinkId" />			
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.meta.BindStateModel" id="bindstatemap">
+		<result property="templateId" 			column="WF_TEMPLATE_ID" />	
+		<result property="stateId" 				column="WF_STATE_ID" />
+		<result property="tableId" 				column="TAB_ID" />
+		<result property="fieldId" 				column="FIELD_ID" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.meta.NodeStateModel" id="nodestatemap">
+		<result property="nodeStateId" 			column="NODE_STATE_ID" />	
+		<result property="nodeId" 				column="NODE_ID" />
+		<result property="stateId" 				column="STATE_ID" />	
+		<result property="stateValue" 			column="STATE_VALUE" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.meta.LinkStateModel" id="linkstatemap">
+		<result property="nodeLinkStateId" 		column="NODE_LINK_STATE_ID" />			
+		<result property="nodeLinkId" 			column="NODE_LINK_ID" />			
+		<result property="stateId" 				column="STATE_ID" />			
+		<result property="stateValue" 			column="STATE_VALUE" />
+	</resultMap>
+	
+	<!-- 运行时用 -->
+	<resultMap class="com.kingdrive.workflow.model.runtime.DraftModel" id="draftmap">
+		<result property="draftId" 				column="WF_DRAFT_ID" />
+		<result property="draftName" 			column="WF_DRAFT_NAME" />		
+		<result property="compoId" 				column="COMPO_ID" />	
+		<result property="masteTableId" 		column="MASTER_TAB_ID" />			
+		<result property="userId" 				column="USER_ID" />	
+		<result property="userName" 			column="USER_NAME" />		
+		<result property="saveTime" 			column="SAVE_TIME" />		
+		<result property="status" 				column="STATUS" />		
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.InstanceModel" id="instancemap">
+		<result property="instanceId"			column="INSTANCE_ID" />		
+		<result property="name" 				column="NAME" />		
+		<result property="description" 			column="DESCRIPTION" />		
+		<result property="templateId" 			column="TEMPLATE_ID" />			
+		<result property="owner" 				column="OWNER" />			
+		<result property="startTime" 			column="START_TIME" />		
+		<result property="endTime" 				column="END_TIME" />		
+		<result property="status" 				column="STATUS" />		
+		<result property="parentInstanceId" 	column="PARENT_INSTANCE_ID" />		
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.CurrentTaskModel" id="currenttaskmap">
+		<result property="currentTaskId" 		column="CURRENT_TASK_ID" />			
+		<result property="instance" 			column="INSTANCE_ID" select="WFEngine.get_Instance_byId"/>		
+		<result property="nodeId" 				column="NODE_ID" />	
+		<result property="executor" 			column="EXECUTOR" />	
+		<result property="delegationId" 		column="DELEGATION_ID" />		
+		<result property="owner" 				column="OWNER" />
+		<result property="creator" 				column="CREATOR" />		
+		<result property="createTime" 			column="CREATE_TIME" />	
+		<result property="limitExecuteTime" 	column="LIMIT_EXECUTE_TIME" />		
+		<result property="responsibility" 		column="RESPONSIBILITY" />	
+		<result property="parentTaskId" 		column="PARENT_TASK_ID" />
+		<result property="granterInfo" 			column="GRANTER_INFO" />
+		<result property="granterId" 			column="GRANTER_ID" />
+		<result property="gkSendStatus" 		column="GK_SEND_STATUS" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.TaskExecutorModel" id="taskexecutormap">
+		<result property="taskExecutorOrderId" 	column="TASK_EXECUTOR_ORDER_ID" />		
+		<result property="instanceId" 			column="INSTANCE_ID" />
+		<result property="nodeId" 				column="NODE_ID" />
+		<result property="executor" 			column="EXECUTOR" />	
+		<result property="executorOrder" 		column="EXECUTOR_ORDER" />
+		<result property="responsibility" 		column="RESPONSIBILITY" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.ActionModel" id="actionmap">
+		<result property="actionId" 			column="ACTION_ID" />	
+		<result property="instanceId" 			column="INSTANCE_ID" />
+		<result property="nodeId" 				column="NODE_ID" />	
+		<result property="actionName" 			column="ACTION_NAME" />		
+		<result property="executor" 			column="EXECUTOR" />
+		<result property="executeTime" 			column="EXECUTE_TIME" />
+		<result property="description" 			column="DESCRIPTION" />
+		<result property="owner" 				column="OWNER" />
+		<result property="limitExecuteTime" 	column="LIMIT_EXECUTE_TIME" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.ActionHistoryModel" id="actionhistorymap">
+		<result property="actionHistoryId" 		column="ACTION_HISTORY_ID" />	
+		<result property="instanceId" 			column="INSTANCE_ID" />
+		<result property="nodeId" 				column="NODE_ID" />
+		<result property="actionName" 			column="ACTION_NAME" />
+		<result property="executor" 			column="EXECUTOR" />
+		<result property="executeTime" 			column="EXECUTE_TIME" />
+		<result property="description" 			column="DESCRIPTION" />
+		<result property="owner" 				column="OWNER" />
+		<result property="limitExecuteTime" 	column="LIMIT_EXECUTE_TIME" />
+	</resultMap>
+	
+	<resultMap class="com.kingdrive.workflow.model.runtime.StateValueModel" id="statevaluemap">
+		<result property="stateValueId" 		column="STATE_VALUE_ID" />
+		<result property="instanceId" 			column="INSTANCE_ID" />
+		<result property="stateId" 				column="STATE_ID" />
+		<result property="value" 				column="VALUE" />
+	</resultMap>
+	<resultMap class="com.kingdrive.workflow.model.runtime.BusinessJuniorModel" id="businessJuniormap">
+		<result property="id"					column="ID" />
+		<result property="projectName"  		column="PROJECT_NAME" />
+		<result property="desc"         		column="DESCRIPTION" />
+		<result property="priority"				column="PRIORITY" />
+		<result property="junCoCode"    		column="JUN_CO_CODE" />
+		<result property="junOrgCode"   		column="JUN_ORG_CODE" />
+		<result property="junPosiCode"  		column="JUN_POSI_CODE" />
+		<result property="junEmpCode"   		column="JUN_EMP_CODE" />
+		<result property="supCoCode"    		column="SUP_CO_CODE" />
+		<result property="supOrgCode"   		column="SUP_ORG_CODE" />
+		<result property="supPosiCode"  		column="SUP_POSI_CODE" />
+		<result property="supEmpCode"   		column="SUP_EMP_CODE" />
+		<result property="supCondition" 		column="SUP_CONDITION" />
+		<result property="nd"           		column="ND" />
+	</resultMap>
+	<resultMap class="com.kingdrive.workflow.model.meta.BindVariableModel" id="bindVariablemap">
+		<result property="variableId"     		column="VARIABLE_ID" />
+		<result property="name"           		column="NAME" />
+		<result property="description"    		column="DESCRIPTION" />
+		<result property="type"           		column="TYPE" />
+		<result property="templateId"     		column="TEMPLATE_ID" />
+		<result property="bindExpression" 		column="BIND_EXPRESSION" />
+		<result property="tableId"        		column="TAB_ID" />
+		<result property="condition"      		column="CONDITION" />
+		<result property="filterByKey"    		column="FILTER_BY_ENTITYKEY" />	
+	</resultMap>
+</sqlMap>

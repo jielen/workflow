@@ -1,0 +1,99 @@
+/*    */ package com.kingdrive.workflow.dialog.message;
+/*    */ 
+/*    */ import java.io.PrintStream;
+/*    */ import javax.jms.Connection;
+/*    */ import javax.jms.ConnectionFactory;
+/*    */ import javax.jms.JMSException;
+/*    */ import javax.jms.MessageConsumer;
+/*    */ import javax.jms.Queue;
+/*    */ import javax.jms.Session;
+/*    */ import javax.naming.NamingException;
+/*    */ 
+/*    */ public abstract class AsynMessThread extends Thread
+/*    */ {
+/* 13 */   private ConnectionFactory cf = null;
+/*    */ 
+/* 15 */   private Queue queue = null;
+/*    */   private AsynMessageListener listener;
+/*    */   private String selector;
+/*    */ 
+/*    */   public ConnectionFactory getCf()
+/*    */   {
+/* 25 */     return this.cf;
+/*    */   }
+/*    */ 
+/*    */   public void setCf(ConnectionFactory cf)
+/*    */   {
+/* 32 */     this.cf = cf;
+/*    */   }
+/*    */ 
+/*    */   public Queue getQueue()
+/*    */   {
+/* 39 */     return this.queue;
+/*    */   }
+/*    */ 
+/*    */   public void setQueue(Queue queue)
+/*    */   {
+/* 46 */     this.queue = queue;
+/*    */   }
+/*    */ 
+/*    */   public void setReceiveMessage(boolean receiveMessage)
+/*    */   {
+/* 54 */     this.listener.setReceiveMessage(receiveMessage);
+/*    */   }
+/*    */ 
+/*    */   public AsynMessThread(AsynMessageListener listener, String selector)
+/*    */     throws NamingException, JMSException
+/*    */   {
+/* 60 */     this.listener = listener;
+/* 61 */     this.selector = selector;
+/* 62 */     initMessageEnv();
+/*    */   }
+/*    */ 
+/*    */   public AsynMessThread(AsynMessageListener listener, String selector, boolean start)
+/*    */     throws NamingException, JMSException
+/*    */   {
+/* 68 */     this.listener = listener;
+/* 69 */     this.selector = selector;
+/* 70 */     initMessageEnv();
+/* 71 */     if (start)
+/* 72 */       start();
+/*    */   }
+/*    */ 
+/*    */   public void run()
+/*    */   {
+/* 77 */     Connection connection = null;
+/* 78 */     Session session = null;
+/* 79 */     MessageConsumer consumer = null;
+/*    */     try {
+/* 81 */       connection = this.cf.createConnection();
+/* 82 */       session = connection.createSession(false, 1);
+/* 83 */       if ((this.selector != null) && (this.selector.length() > 0))
+/* 84 */         consumer = session.createConsumer(this.queue, this.selector);
+/*    */       else {
+/* 86 */         consumer = session.createConsumer(this.queue);
+/*    */       }
+/* 88 */       consumer.setMessageListener(this.listener);
+/* 89 */       connection.start();
+/* 90 */       this.listener.getLatch().waitTillDone();
+/*    */     } catch (Exception ex) {
+/* 92 */       System.err.println(ex);
+/*    */       try
+/*    */       {
+/* 95 */         connection.close(); } catch (Exception localException1) {
+/*    */       } } finally { try { connection.close();
+/*    */       }
+/*    */       catch (Exception localException2)
+/*    */       {
+/*    */       }
+/*    */     }
+/*    */   }
+/*    */ 
+/*    */   abstract void initMessageEnv()
+/*    */     throws NamingException, JMSException;
+/*    */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.message.AsynMessThread
+ * JD-Core Version:    0.6.0
+ */

@@ -1,0 +1,31 @@
+/*    */ package com.kingdrive.workflow.dialog.message;
+/*    */ 
+/*    */ import java.io.PrintStream;
+/*    */ 
+/*    */ public class DoneLatch
+/*    */ {
+/*  4 */   volatile boolean done = false;
+/*    */ 
+/*    */   public void waitTillDone() {
+/*  7 */     synchronized (this) {
+/*  8 */       while (!this.done)
+/*    */         try {
+/* 10 */           wait();
+/*    */         } catch (InterruptedException localInterruptedException) {
+/*    */         }
+/* 13 */       System.out.println("listener has stop!");
+/*    */     }
+/*    */   }
+/*    */ 
+/*    */   public void allDone() {
+/* 18 */     synchronized (this) {
+/* 19 */       this.done = true;
+/* 20 */       notify();
+/*    */     }
+/*    */   }
+/*    */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.message.DoneLatch
+ * JD-Core Version:    0.6.0
+ */

@@ -1,0 +1,81 @@
+/*    */ package com.kingdrive.workflow.dialog;
+/*    */ 
+/*    */ import java.awt.BorderLayout;
+/*    */ import java.awt.Container;
+/*    */ import java.awt.FlowLayout;
+/*    */ import java.awt.Frame;
+/*    */ import java.awt.event.ActionEvent;
+/*    */ import java.awt.event.ActionListener;
+/*    */ import javax.swing.JButton;
+/*    */ import javax.swing.JDialog;
+/*    */ import javax.swing.JEditorPane;
+/*    */ import javax.swing.JPanel;
+/*    */ 
+/*    */ public class CommentDialog extends JDialog
+/*    */   implements ActionListener
+/*    */ {
+/*    */   private static final long serialVersionUID = 7714089677620182874L;
+/*    */   private JEditorPane editor;
+/*    */   private JButton confirmButton;
+/*    */   private JButton cancelButton;
+/* 27 */   private String comment = "";
+/*    */ 
+/*    */   public CommentDialog()
+/*    */   {
+/* 31 */     init();
+/*    */   }
+/*    */ 
+/*    */   public CommentDialog(Frame owner) {
+/* 35 */     super(owner);
+/* 36 */     init();
+/*    */   }
+/*    */ 
+/*    */   public CommentDialog(Frame owner, boolean modal) {
+/* 40 */     super(owner, modal);
+/* 41 */     init();
+/*    */   }
+/*    */ 
+/*    */   public String getComment()
+/*    */   {
+/* 46 */     return this.comment;
+/*    */   }
+/*    */ 
+/*    */   public void setComment(String comment) {
+/* 50 */     this.comment = comment;
+/*    */   }
+/*    */ 
+/*    */   private void init() {
+/* 54 */     getContentPane().setLayout(new BorderLayout());
+/* 55 */     this.editor = new JEditorPane();
+/* 56 */     getContentPane().add(this.editor, "Center");
+/* 57 */     JPanel panel = new JPanel();
+/* 58 */     panel.setLayout(new FlowLayout());
+/* 59 */     this.confirmButton = new JButton("确定");
+/* 60 */     this.confirmButton.setActionCommand("confirm");
+/* 61 */     this.confirmButton.addActionListener(this);
+/* 62 */     this.cancelButton = new JButton("取消");
+/* 63 */     this.cancelButton.setActionCommand("cancel");
+/* 64 */     this.cancelButton.addActionListener(this);
+/* 65 */     panel.add(this.confirmButton);
+/* 66 */     panel.add(this.cancelButton);
+/* 67 */     getContentPane().add(panel, "South");
+/* 68 */     setSize(400, 400);
+/* 69 */     setDefaultCloseOperation(2);
+/* 70 */     setVisible(true);
+/*    */   }
+/*    */ 
+/*    */   public void actionPerformed(ActionEvent event) {
+/* 74 */     String command = event.getActionCommand();
+/* 75 */     if (command.equals("confirm")) {
+/* 76 */       this.comment = this.editor.getText();
+/* 77 */       dispose();
+/*    */     }
+/* 79 */     if (command.equals("cancel"))
+/* 80 */       dispose();
+/*    */   }
+/*    */ }
+
+/* Location:           D:\temp\wf\wf.jar
+ * Qualified Name:     com.kingdrive.workflow.dialog.CommentDialog
+ * JD-Core Version:    0.6.0
+ */
